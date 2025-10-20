@@ -29,12 +29,6 @@ const userSchema = new mongoose.Schema(
       min: [5, 'Password must be at least 5 alpha numeric'],
       select: false,
     },
-
-    role: {
-      type: String,
-      enum: ['admin', 'customer'],
-      default: 'customer',
-    },
   },
 
   {
