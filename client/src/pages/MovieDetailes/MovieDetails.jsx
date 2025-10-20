@@ -1,22 +1,14 @@
-import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import mediaDetailsServices from "../../services/mediaDetailsServices.js";
 import DetailsSection from "../../components/DetailsSection/DetailsSection.jsx";
+import useMediaDetails from "../../hooks/useMediaDetails.js";
 
 function MovieDetails() {
     // Get movie ID from URL parameters
     const { id } = useParams();
 
-    // Holds the fetched movie details
-    const [details, setDetails] = useState({});
+    const {data, loading, error} = useMediaDetails('movie', id);
 
-    // Fetch movie details when component mounts
-    useEffect(() => {
-        mediaDetailsServices("movie", id, setDetails);
-    }, [id]);
-
-    // Render the movie details section
-    return <DetailsSection data={details} />;
+    return <DetailsSection data={data} error={error} loading={loading} />;
 }
 
 export default MovieDetails;

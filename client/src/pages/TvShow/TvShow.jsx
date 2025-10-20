@@ -1,35 +1,39 @@
-import { useEffect, useState } from 'react';
-import trendingServices from '../../services/trendingServices.js';
+
 import TrendingSection from '../../components/TrendingSection/TrendingSection.jsx';
 import Pagination from "../../components/Pagination/Pagination.jsx";
 import Footer from "../Footer/Footer.jsx";
+import useTrendingApi from "../../hooks/useTrending.js";
+import Loading from "../../components/Loading/Loading.jsx";
 
 function TvShow() {
-    // Holds the fetched list of trending TV shows
-    const [tvShow, setTvShow] = useState([]);
 
-    // Fetch trending TV shows when the component mounts
-    useEffect(() => {
-        trendingServices('tv', setTvShow);
-    }, []);
 
-    // Fetch data for a specific page (used by the Pagination component)
-    const getTvShow = (page) => {
-        trendingServices('tv', setTvShow, page);
-    };
+    const {data, setPage, error, loading} = useTrendingApi('tv');
 
-    return (
-        <>
-            <div className="container">
-                {/* Render trending TV shows */}
-                <TrendingSection data={tvShow} path={'/tv-show-details/'} />
-
-                {/* Pagination controls for navigating between pages */}
-                <Pagination getData={getTvShow} />
+    if (error) {
+        return (
+            <div className="container text-center my-5">
+                <h2 className="text-danger">Something went wrong 😢</h2>
+                <p className="opacity-75">{error}</p>
             </div>
-            <Footer/>
-        </>
-    );
+        )
+    } else {
+        return (
+            <>
+                {loading ? <Loading/> :
+                    <div className="container">
+                        {/* Render trending TV shows */}
+                        <TrendingSection data={data} path={'/tv-show-details/'} />
+
+                        {/* Pagination controls for navigating between pages */}
+                        <Pagination getData={setPage} />
+                    </div>
+                }
+                <Footer/>
+            </>
+        )
+    }
+
 }
 
 export default TvShow;

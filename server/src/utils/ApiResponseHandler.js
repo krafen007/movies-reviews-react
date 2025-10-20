@@ -1,3 +1,4 @@
+// Utility class to standardize successful API responses
 class ApiResponseHandler {
     constructor(statusCode, message, data = null) {
         this.success = true;

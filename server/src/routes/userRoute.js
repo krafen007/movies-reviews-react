@@ -6,11 +6,27 @@ import { logInSchema, registerSchema } from '../validations/userValidation.js';
 
 const router = express.Router();
 
-router
-    .post('/register', validationMiddleware(registerSchema), register)
-    .post('/login', validationMiddleware(logInSchema), logIn)
-    .get('/profile', authMiddleware, (req, res) => {
-        res.status(200).send(`Hello mr ${req.user.firstName} your role is: ${req.user.role}`);
-    });
+/**
+ * @route POST /api/users/register
+ * @desc Register a new user
+ * @access Public
+ */
+router.post('/register', validationMiddleware(registerSchema), register);
+
+/**
+ * @route POST /api/users/login
+ * @desc Login a user
+ * @access Public
+ */
+router.post('/login', validationMiddleware(logInSchema), logIn);
+
+/**
+ * @route GET /api/users/profile
+ * @desc Get the profile of logged-in user
+ * @access Protected
+ */
+router.get('/profile', authMiddleware, (req, res) => {
+    res.status(200).send(`Hello Mr ${req.user.firstName}, your role is: ${req.user.role}`);
+});
 
 export default router;
