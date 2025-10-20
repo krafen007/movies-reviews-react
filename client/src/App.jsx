@@ -12,42 +12,73 @@ import NotFound from './pages/NotFound/NotFound.jsx';
 import TvShow from './pages/TvShow/TvShow.jsx';
 import TvShowDetails from './pages/TvShowDetails/TvShowDetails.jsx';
 import PeopleDetails from './pages/PeopleDetails/PeopleDetails.jsx';
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
+import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute.jsx";
 
 function App() {
+    // Track user login state
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+    // Check if the user is already logged in (based on localStorage)
     const checkLogInState = () => {
         const data = localStorage.getItem("data");
         if (data) {
             setIsLoggedIn(true);
         }
-    }
+    };
 
+    // Handle user logout and clear stored data
     const handleLogout = () => {
         localStorage.clear();
-        console.log("hello from bl7")
         setIsLoggedIn(false);
-    }
+    };
 
+    // Run login check on initial render
     useEffect(() => {
-        checkLogInState()
+        checkLogInState();
     }, []);
+
     return (
         <>
-            <Navbar isLoggedIn={isLoggedIn} handleLogout={handleLogout}/>
+            <Navbar isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
+
             <Routes>
-                <Route path="/login" element={ <Login checkLogInState={checkLogInState} />} />
+                {/* Public routes */}
+                <Route path="/login" element={<Login checkLogInState={checkLogInState} />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/" element={<Home />} />
-                <Route path="/movies" element={<Movies />} />
-                <Route path="/tv-show" element={<TvShow />} />
-                <Route path="/people" element={<People />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/netwrok" element={<Network />} />
                 <Route path="/movie-details/:id" element={<MovieDetails />} />
                 <Route path="/tv-show-details/:id" element={<TvShowDetails />} />
                 <Route path="/people-details/:id" element={<PeopleDetails />} />
+
+                {/* Protected routes: user must be logged in */}
+                <Route path="/movies" element={
+                    <ProtectedRoute isLoggedIn={isLoggedIn}>
+                        <Movies />
+                    </ProtectedRoute>
+                } />
+                <Route path="/tv-show" element={
+                    <ProtectedRoute isLoggedIn={isLoggedIn}>
+                        <TvShow />
+                    </ProtectedRoute>
+                } />
+                <Route path="/people" element={
+                    <ProtectedRoute isLoggedIn={isLoggedIn}>
+                        <People />
+                    </ProtectedRoute>
+                } />
+                <Route path="/about" element={
+                    <ProtectedRoute isLoggedIn={isLoggedIn}>
+                        <About />
+                    </ProtectedRoute>
+                } />
+                <Route path="/network" element={
+                    <ProtectedRoute isLoggedIn={isLoggedIn}>
+                        <Network />
+                    </ProtectedRoute>
+                } />
+
+                {/* Catch all unmatched routes */}
                 <Route path="/*" element={<NotFound />} />
             </Routes>
         </>
