@@ -1,4 +1,4 @@
-import { useState } from 'react';
+ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Joi from 'joi';
 import InputField from '../../components/InputField/InputField.jsx';
@@ -6,7 +6,7 @@ import Btn from '../../components/Btn/Btn.jsx';
 import authService from '../../services/authService.js';
 import ValidationErrorsList from '../../components/ValidationErrorsList/ValidationErrorsList.jsx';
 
-function Login() {
+function Login({checkLogInState}) {
     const [errors, setErrors] = useState([]);
     const [apiError, setApiError] = useState('');
     const [isCallingApi, setIsCallingApi] = useState(false);
@@ -50,10 +50,13 @@ function Login() {
 
         const responseData = await authService('http://localhost:3001/api/users/login', user);
 
-        if (responseData.success === false) {
-            setApiError(responseData.message);
-        } else {
+        if (responseData.success === true) {
+            // True user login
+            localStorage.setItem("data", JSON.stringify(responseData.data));
+            checkLogInState()
             navigation('/');
+        } else {
+            setApiError(responseData.message);
         }
 
         setIsCallingApi(false);

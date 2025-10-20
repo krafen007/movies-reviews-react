@@ -12,13 +12,32 @@ import NotFound from './pages/NotFound/NotFound.jsx';
 import TvShow from './pages/TvShow/TvShow.jsx';
 import TvShowDetails from './pages/TvShowDetails/TvShowDetails.jsx';
 import PeopleDetails from './pages/PeopleDetails/PeopleDetails.jsx';
+import {useEffect, useState} from "react";
 
 function App() {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    const checkLogInState = () => {
+        const data = localStorage.getItem("data");
+        if (data) {
+            setIsLoggedIn(true);
+        }
+    }
+
+    const handleLogout = () => {
+        localStorage.clear();
+        console.log("hello from bl7")
+        setIsLoggedIn(false);
+    }
+
+    useEffect(() => {
+        checkLogInState()
+    }, []);
     return (
         <>
-            <Navbar />
+            <Navbar isLoggedIn={isLoggedIn} handleLogout={handleLogout}/>
             <Routes>
-                <Route path="/login" element={<Login />} />
+                <Route path="/login" element={ <Login checkLogInState={checkLogInState} />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/" element={<Home />} />
                 <Route path="/movies" element={<Movies />} />
